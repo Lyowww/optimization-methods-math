@@ -4,12 +4,15 @@ import { useCallback, useMemo, useState } from "react";
 import { useApp } from "@/context/AppProviders";
 import { api, type ApiResponse } from "@/lib/api";
 import { EXAMPLES } from "@/lib/examples";
+import { METHODS } from "@/lib/methods";
 import { calculusPlot } from "@/lib/plots";
 import { exportElementToPdf, downloadBase64Png, copyText } from "@/lib/export";
 import { MethodLabLayout } from "@/components/lab/MethodLabLayout";
 import { ActionBar } from "@/components/lab/ActionBar";
-import { ResultPanel } from "@/components/lab/ResultPanel";
+import { ChartPlaceholder } from "@/components/lab/ChartPlaceholder";
 import { PlotlyChart } from "@/components/charts/PlotlyChart";
+
+const moduleMeta = METHODS.find((m) => m.id === "calculus-of-variations")!;
 
 export default function CalculusOfVariationsPage() {
   const { tr } = useApp();
@@ -47,21 +50,30 @@ export default function CalculusOfVariationsPage() {
 
   const plot = useMemo(() => (data?.plotData ? calculusPlot(data.plotData) : null), [data]);
 
+  const loadExample = () => {
+    setIntegrand(ex.integrand);
+    setA(ex.a);
+    setB(ex.b);
+    setYA(ex.y_a);
+    setYB(ex.y_b);
+  };
+
   return (
     <MethodLabLayout
       title={meta.title}
       description={meta.desc}
+      moduleIcon={moduleMeta.icon}
+      moduleColor={moduleMeta.color}
+      data={data}
+      error={error}
       actions={
         <ActionBar
           loading={loading}
           onRun={run}
           onReset={() => {
-            setIntegrand(ex.integrand);
-            setA(ex.a);
-            setB(ex.b);
-            setYA(ex.y_a);
-            setYB(ex.y_b);
+            loadExample();
             setData(null);
+            setError(null);
           }}
           onCopy={() => data && copyText(JSON.stringify(data, null, 2))}
           onExportPdf={() => exportElementToPdf("lab-export-root", "calculus-of-variations.pdf")}
@@ -72,60 +84,40 @@ export default function CalculusOfVariationsPage() {
         />
       }
       input={
-        <div className="space-y-4">
-          <button
-            type="button"
-            className="btn-secondary w-full text-xs"
-            onClick={() => {
-              setIntegrand(ex.integrand);
-              setA(ex.a);
-              setB(ex.b);
-              setYA(ex.y_a);
-              setYB(ex.y_b);
-            }}
-          >
+        <div className="mx-auto max-w-lg space-y-5">
+          <button type="button" className="btn-secondary w-full" onClick={loadExample}>
             {tr.example}
           </button>
           <div>
             <label className="label-field">{tr.integrand}</label>
             <input
-              className="input-field w-full font-mono text-xs"
+              className="input-field font-mono text-sm"
               value={integrand}
               onChange={(e) => setIntegrand(e.target.value)}
               placeholder="yp**2"
             />
           </div>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="label-field">{tr.intervalA}</label>
-              <input type="number" className="input-field w-full font-mono text-xs" value={a} onChange={(e) => setA(+e.target.value)} />
+              <input type="number" className="input-field font-mono text-sm" value={a} onChange={(e) => setA(+e.target.value)} />
             </div>
             <div>
               <label className="label-field">{tr.intervalB}</label>
-              <input type="number" className="input-field w-full font-mono text-xs" value={b} onChange={(e) => setB(+e.target.value)} />
+              <input type="number" className="input-field font-mono text-sm" value={b} onChange={(e) => setB(+e.target.value)} />
             </div>
             <div>
               <label className="label-field">{tr.boundaryYa}</label>
-              <input type="number" className="input-field w-full font-mono text-xs" value={yA} onChange={(e) => setYA(+e.target.value)} />
+              <input type="number" className="input-field font-mono text-sm" value={yA} onChange={(e) => setYA(+e.target.value)} />
             </div>
             <div>
               <label className="label-field">{tr.boundaryYb}</label>
-              <input type="number" className="input-field w-full font-mono text-xs" value={yB} onChange={(e) => setYB(+e.target.value)} />
+              <input type="number" className="input-field font-mono text-sm" value={yB} onChange={(e) => setYB(+e.target.value)} />
             </div>
           </div>
         </div>
       }
-      chart={
-        <div>
-          <h3 className="mb-2 text-xs font-semibold uppercase text-lab-muted">{tr.interactivePlot}</h3>
-          {plot ? (
-            <PlotlyChart data={plot.data} layout={plot.layout} config={{ scrollZoom: true }} />
-          ) : (
-            <div className="flex h-[380px] items-center justify-center text-sm text-lab-muted">—</div>
-          )}
-        </div>
-      }
-      results={<ResultPanel data={data} error={error} />}
+      chart={plot ? <PlotlyChart data={plot.data} layout={plot.layout} /> : <ChartPlaceholder />}
     />
   );
 }

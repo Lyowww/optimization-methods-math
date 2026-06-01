@@ -4,11 +4,12 @@ import { useCallback, useMemo, useState } from "react";
 import { useApp } from "@/context/AppProviders";
 import { api, type ApiResponse } from "@/lib/api";
 import { EXAMPLES } from "@/lib/examples";
+import { METHODS } from "@/lib/methods";
 import { constrainedExtremumPlot } from "@/lib/plots";
 import { exportElementToPdf, downloadBase64Png, copyText } from "@/lib/export";
 import { MethodLabLayout } from "@/components/lab/MethodLabLayout";
 import { ActionBar } from "@/components/lab/ActionBar";
-import { ResultPanel } from "@/components/lab/ResultPanel";
+import { ChartPlaceholder } from "@/components/lab/ChartPlaceholder";
 import { PlotlyChart } from "@/components/charts/PlotlyChart";
 
 function ConstraintList({
@@ -26,25 +27,28 @@ function ConstraintList({
       {items.map((item, i) => (
         <div key={i} className="mb-2 flex gap-2">
           <input
-            className="input-field flex-1 font-mono text-xs"
+            className="input-field flex-1 font-mono text-sm"
             value={item}
             onChange={(e) => onChange(items.map((x, j) => (j === i ? e.target.value : x)))}
           />
           <button
             type="button"
-            className="text-red-400"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-red-500/30 text-red-400 transition hover:bg-red-500/10"
             onClick={() => onChange(items.filter((_, j) => j !== i))}
+            aria-label="Remove"
           >
             ×
           </button>
         </div>
       ))}
-      <button type="button" className="btn-secondary w-full text-xs" onClick={() => onChange([...items, ""])}>
-        +
+      <button type="button" className="btn-secondary w-full text-sm" onClick={() => onChange([...items, ""])}>
+        + {label}
       </button>
     </div>
   );
 }
+
+const moduleMeta = METHODS.find((m) => m.id === "constrained-extremum")!;
 
 export default function ConstrainedExtremumPage() {
   const { tr } = useApp();
@@ -81,19 +85,28 @@ export default function ConstrainedExtremumPage() {
     [data]
   );
 
+  const loadExample = () => {
+    setObjective(ex.objective);
+    setEqualities(ex.equalities);
+    setInequalities(ex.inequalities);
+  };
+
   return (
     <MethodLabLayout
       title={meta.title}
       description={meta.desc}
+      moduleIcon={moduleMeta.icon}
+      moduleColor={moduleMeta.color}
+      data={data}
+      error={error}
       actions={
         <ActionBar
           loading={loading}
           onRun={run}
           onReset={() => {
-            setObjective(ex.objective);
-            setEqualities(ex.equalities);
-            setInequalities(ex.inequalities);
+            loadExample();
             setData(null);
+            setError(null);
           }}
           onCopy={() => data && copyText(JSON.stringify(data, null, 2))}
           onExportPdf={() => exportElementToPdf("lab-export-root", "constrained-extremum.pdf")}
@@ -104,37 +117,25 @@ export default function ConstrainedExtremumPage() {
         />
       }
       input={
-        <div className="space-y-4">
-          <button
-            type="button"
-            className="btn-secondary w-full text-xs"
-            onClick={() => {
-              setObjective(ex.objective);
-              setEqualities(ex.equalities);
-              setInequalities(ex.inequalities);
-            }}
-          >
+        <div className="mx-auto max-w-lg space-y-5">
+          <button type="button" className="btn-secondary w-full" onClick={loadExample}>
             {tr.example}
           </button>
           <div>
             <label className="label-field">{tr.objective}</label>
-            <input className="input-field w-full font-mono text-xs" value={objective} onChange={(e) => setObjective(e.target.value)} />
+            <input
+              className="input-field font-mono text-sm"
+              value={objective}
+              onChange={(e) => setObjective(e.target.value)}
+            />
           </div>
           <ConstraintList label={tr.equalities} items={equalities} onChange={setEqualities} />
           <ConstraintList label={tr.inequalities} items={inequalities} onChange={setInequalities} />
         </div>
       }
       chart={
-        <div>
-          <h3 className="mb-2 text-xs font-semibold uppercase text-lab-muted">{tr.interactivePlot}</h3>
-          {plot ? (
-            <PlotlyChart data={plot.data} layout={plot.layout} config={{ scrollZoom: true }} />
-          ) : (
-            <div className="flex h-[380px] items-center justify-center text-sm text-lab-muted">—</div>
-          )}
-        </div>
+        plot ? <PlotlyChart data={plot.data} layout={plot.layout} /> : <ChartPlaceholder />
       }
-      results={<ResultPanel data={data} error={error} />}
     />
   );
 }

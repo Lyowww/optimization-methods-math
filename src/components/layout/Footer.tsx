@@ -6,10 +6,10 @@ export function Footer() {
   const { tr } = useApp();
 
   return (
-    <footer className="border-t border-lab-border/60 bg-lab-surface/40 px-4 py-6 md:px-6 lg:px-8">
-      <div className="mx-auto max-w-6xl space-y-1 text-center text-xs text-lab-muted md:text-sm">
-        <p className="font-medium text-lab-fg/80">{tr.creatorName}</p>
-        <p className="max-w-3xl mx-auto leading-relaxed">{tr.projectCredit}</p>
+    <footer className="mt-auto border-t border-lab-border/60 bg-lab-card/50 px-4 py-6 backdrop-blur-sm sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-4xl space-y-2 text-center">
+        <p className="text-sm font-semibold text-lab-text">{tr.creatorName}</p>
+        <p className="text-xs leading-relaxed text-lab-muted sm:text-sm">{tr.projectCredit}</p>
       </div>
     </footer>
   );

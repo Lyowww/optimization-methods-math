@@ -2,42 +2,118 @@
 
 import { ReactNode } from "react";
 import { motion } from "framer-motion";
+import { LineChart, PenLine, Sparkles } from "lucide-react";
+import type { ApiResponse } from "@/lib/api";
+import { Tabs } from "@/components/ui/Tabs";
+import { ResultPanel } from "@/components/lab/ResultPanel";
+import { useApp } from "@/context/AppProviders";
 
 interface MethodLabLayoutProps {
   title: string;
   description: string;
+  moduleIcon: string;
+  moduleColor: string;
   input: ReactNode;
   chart: ReactNode;
-  results: ReactNode;
+  chartToolbar?: ReactNode;
+  data: ApiResponse | null;
+  error: string | null;
+  resultExtra?: ReactNode;
   actions: ReactNode;
 }
 
 export function MethodLabLayout({
   title,
   description,
+  moduleIcon,
+  moduleColor,
   input,
   chart,
-  results,
+  chartToolbar,
+  data,
+  error,
+  resultExtra,
   actions,
 }: MethodLabLayoutProps) {
+  const { tr } = useApp();
+
   return (
-    <div className="mx-auto max-w-[1600px] space-y-6">
-      <header>
-        <motion.h1
-          initial={{ opacity: 0, x: -12 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="font-display text-2xl font-bold md:text-3xl"
-        >
-          {title}
-        </motion.h1>
-        <p className="mt-1 max-w-2xl text-sm text-lab-muted">{description}</p>
-        <div className="mt-4">{actions}</div>
+    <div className="mx-auto max-w-[1680px] space-y-4 sm:space-y-6">
+      {/* Module header */}
+      <header className="glass-card overflow-hidden">
+        <div className={`h-1 w-full bg-gradient-to-r ${moduleColor}`} />
+        <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-start sm:justify-between sm:p-6">
+          <div className="flex gap-4">
+            <div
+              className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br text-2xl text-white shadow-lg ${moduleColor}`}
+            >
+              {moduleIcon}
+            </div>
+            <div className="min-w-0">
+              <motion.h1
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="font-display text-xl font-bold leading-tight sm:text-2xl md:text-3xl"
+              >
+                {title}
+              </motion.h1>
+              <p className="mt-1.5 text-sm leading-relaxed text-lab-muted">{description}</p>
+            </div>
+          </div>
+          <div className="shrink-0">{actions}</div>
+        </div>
       </header>
 
-      <div id="lab-export-root" className="grid gap-6 xl:grid-cols-12">
-        <section className="glass-card p-5 xl:col-span-3">{input}</section>
-        <section className="glass-card p-4 xl:col-span-6">{chart}</section>
-        <section className="glass-card p-5 xl:col-span-3">{results}</section>
+      {/* Tabbed workspace */}
+      <div id="lab-export-root" className="glass-card overflow-hidden">
+        <Tabs
+          variant="pill"
+          defaultTab="input"
+          tabs={[
+            {
+              id: "input",
+              label: tr.tabInput,
+              icon: <PenLine size={16} />,
+              content: (
+                <div className="px-1 pb-2 sm:px-2">
+                  <p className="mb-4 text-xs text-lab-muted">{tr.tabInputHint}</p>
+                  {input}
+                </div>
+              ),
+            },
+            {
+              id: "graph",
+              label: tr.tabGraph,
+              icon: <LineChart size={16} />,
+              content: (
+                <div className="px-1 pb-2 sm:px-2">
+                  <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+                    <p className="text-xs font-medium uppercase tracking-wider text-lab-muted">
+                      {tr.interactivePlot}
+                    </p>
+                    <p className="text-[10px] text-lab-muted/80">{tr.plotHint}</p>
+                  </div>
+                  {chartToolbar}
+                  <div className="plot-container min-h-[280px] sm:min-h-[360px] lg:min-h-[420px]">
+                    {chart}
+                  </div>
+                </div>
+              ),
+            },
+            {
+              id: "solution",
+              label: tr.tabSolution,
+              icon: <Sparkles size={16} />,
+              content: (
+                <div className="px-1 pb-2 sm:px-2">
+                  <ResultPanel data={data} error={error}>
+                    {resultExtra}
+                  </ResultPanel>
+                </div>
+              ),
+            },
+          ]}
+        />
       </div>
     </div>
   );

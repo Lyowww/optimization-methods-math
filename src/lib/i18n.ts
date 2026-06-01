@@ -3,8 +3,24 @@ export type Locale = "en" | "hy";
 export const translations = {
   en: {
     appName: "Optimization Methods Visual Lab",
+    appNameShort: "Optimization Lab",
     tagline:
       "Interactive laboratory for constrained optimization, linear programming, and the calculus of variations",
+
+    tabInput: "Input",
+    tabGraph: "Graph",
+    tabSolution: "Solution",
+    tabSummary: "Summary",
+    tabFormulas: "Formulas",
+    tabSteps: "Steps",
+    tabStatic: "Static Plot",
+    tabInputHint: "Enter the problem data, then run the analysis.",
+    plotHint: "Pinch to zoom on mobile · use the toolbar to export",
+    emptySolution: "No solution yet",
+    emptySolutionHint: "Fill in the input tab and press Run Analysis.",
+    rawData: "Complete Result Data",
+    resultSummary: "Key Solver Values",
+    noStaticPlot: "Run the analysis to generate the static plot.",
 
     dashboard: "Dashboard",
     methods: "Modules",
@@ -64,8 +80,7 @@ export const translations = {
 
     objectiveSense: "Optimization Goal",
 
-    objectiveCoeffs:
-      "Objective Function Coefficients (c₁, c₂)",
+    objectiveCoeffs: "Objective Function Coefficients (c₁, c₂)",
 
     maximize: "Maximize",
     minimize: "Minimize",
@@ -78,8 +93,7 @@ export const translations = {
     boundaryYa: "y(a)",
     boundaryYb: "y(b)",
 
-    animationFrame:
-      "Objective Function Line Position",
+    animationFrame: "Objective Function Line Position",
 
     creatorName: "Lyova Hovhannisyan",
 
@@ -114,16 +128,33 @@ export const translations = {
   },
 
   hy: {
-    appName: "Օպտիմիզացիայի Մեթոդների Վիզուալ Լաբորատորիա",
+    appName: "Օպտիմիզացիայի մեթոդների վիզուալ լաբորատորիա",
+    appNameShort: "Օպտիմիզացիայի լաբորատորիա",
 
     tagline:
-      "Ինտերակտիվ լաբորատորիա սահմանափակված օպտիմիզացիայի, գծային ծրագրավորման և տարողական հաշվարկի համար",
+      "Ինտերակտիվ լաբորատորիա սահմանափակված օպտիմիզացման, գծային ծրագրավորման և տարողական հաշվարկի համար",
+
+    tabInput: "Մուտք",
+    tabGraph: "Գրաֆիկ",
+    tabSolution: "Լուծում",
+    tabSummary: "Ամփոփում",
+    tabFormulas: "Բանաձևեր",
+    tabSteps: "Քայլեր",
+    tabStatic: "Ստատիկ գրաֆիկ",
+    tabInputHint: "Մուտքագրեք խնդրի տվյալները, ապա գործարկեք վերլուծությունը։",
+    plotHint:
+      "Բջջայինում մեծացնելու համար օգտագործեք մատների շարժումը · արտահանման համար օգտվեք գործիքագոտուց",
+    emptySolution: "Լուծում դեռ չկա",
+    emptySolutionHint:
+      "Լրացրեք մուտքային տվյալները և սեղմեք «Գործարկել վերլուծությունը»։",
+    rawData: "Արդյունքի ամբողջական տվյալներ",
+    resultSummary: "Լուծիչի հիմնական արժեքները",
+    noStaticPlot: "Գործարկեք վերլուծությունը՝ ստատիկ գրաֆիկ ստանալու համար։",
 
     dashboard: "Վահանակ",
-
     methods: "Մոդուլներ",
 
-    run: "Գործարկել",
+    run: "Գործարկել վերլուծությունը",
     reset: "Վերականգնել",
 
     copy: "Պատճենել լուծումը",
@@ -134,7 +165,6 @@ export const translations = {
     notConverged: "Թույլատրելի լուծում չի գտնվել",
 
     iterations: "Իտերացիաներ",
-
     result: "Արդյունք",
 
     formulas: "Բանաձևեր",
@@ -147,7 +177,7 @@ export const translations = {
     explore: "Ուսումնասիրել մոդուլները",
 
     homeHero:
-      "Ինտերակտիվ մաթեմատիկական լաբորատորիա սահմանափակված օպտիմիզացիայի, գծային ծրագրավորման, գրաֆիկական լուծման մեթոդների և տարողական հաշվարկի ուսումնասիրման համար։",
+      "Ինտերակտիվ մաթեմատիկական լաբորատորիա սահմանափակված օպտիմիզացման, գծային ծրագրավորման, գրաֆիկական լուծման մեթոդների և տարողական հաշվարկի ուսումնասիրման համար։",
 
     sidebar: "Մոդուլներ",
 
@@ -168,14 +198,10 @@ export const translations = {
     staticPlot: "Ստատիկ գրաֆիկ (Matplotlib)",
     interactivePlot: "Ինտերակտիվ գրաֆիկ (Plotly)",
 
-    objective:
-      "Նպատակային ֆունկցիա f(x₁,x₂,...)",
+    objective: "Նպատակային ֆունկցիա f(x₁,x₂,...)",
 
-    equalities:
-      "Հավասարության սահմանափակումներ (g(x)=0)",
-
-    inequalities:
-      "Անհավասարության սահմանափակումներ (h(x)≤0)",
+    equalities: "Հավասարության սահմանափակումներ (g(x)=0)",
+    inequalities: "Անհավասարության սահմանափակումներ (h(x)≤0)",
 
     addConstraint: "Ավելացնել սահմանափակում",
 
@@ -183,13 +209,12 @@ export const translations = {
 
     objectiveSense: "Օպտիմիզացման նպատակ",
 
-    objectiveCoeffs:
-      "Նպատակային ֆունկցիայի գործակիցներ (c₁, c₂)",
+    objectiveCoeffs: "Նպատակային ֆունկցիայի գործակիցներ (c₁, c₂)",
 
     maximize: "Մաքսիմալացնել",
     minimize: "Մինիմալացնել",
 
-    integrand: "Ինտեգրանդ F(x,y,y′)",
+    integrand: "Ինտեգրանդ ֆունկցիա F(x,y,y′)",
 
     intervalA: "Միջակայքի սկիզբ a",
     intervalB: "Միջակայքի վերջ b",
@@ -197,13 +222,12 @@ export const translations = {
     boundaryYa: "y(a)",
     boundaryYb: "y(b)",
 
-    animationFrame:
-      "Նպատակային ֆունկցիայի ուղղի դիրք",
+    animationFrame: "Նպատակային ֆունկցիայի ուղղի դիրք",
 
     creatorName: "Լյովա Հովհաննիսյան",
 
     projectCredit:
-      "Այս նախագիծը մշակվել է Երևանի պետական համալսարանի Ինֆորմատիկայի և կիրառական մաթեմատիկայի ֆակուլտետի Տեղեկատվական անվտանգության 3-րդ կուրսի ուսանող Լյովա Հովհաննիսյանի կողմից «Օպտիմիզացիայի մեթոդներ» առարկայի շրջանակում։ Դասախոս՝ Ռաֆիկ Խաչատրյան։",
+      "Այս նախագիծը մշակվել է Երևանի պետական համալսարանի Ինֆորմատիկայի և կիրառական մաթեմատիկայի ֆակուլտետի Տեղեկատվական անվտանգության 3-րդ կուրսի ուսանող Լյովա Հովհաննիսյանի կողմից՝ «Օպտիմիզացիայի մեթոդներ» առարկայի շրջանակում։ Դասախոս՝ Ռաֆիկ Խաչատրյան։",
 
     methodsList: {
       "constrained-extremum": {

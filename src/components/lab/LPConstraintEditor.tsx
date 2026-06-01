@@ -37,18 +37,20 @@ export function LPConstraintEditor({
       </div>
       <div>
         <label className="label-field">{tr.objectiveCoeffs}</label>
-        <div className="flex gap-2">
+        <div className="grid grid-cols-2 gap-2">
           <input
             type="number"
-            className="input-field font-mono text-xs"
+            className="input-field font-mono text-sm"
             value={objective[0]}
             onChange={(e) => onObjectiveChange([+e.target.value, objective[1]])}
+            aria-label="c1"
           />
           <input
             type="number"
-            className="input-field font-mono text-xs"
+            className="input-field font-mono text-sm"
             value={objective[1]}
             onChange={(e) => onObjectiveChange([objective[0], +e.target.value])}
+            aria-label="c2"
           />
         </div>
       </div>

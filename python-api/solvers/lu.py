@@ -1,0 +1,82 @@
+"""LU decomposition with forward/back substitution."""
+from typing import Any
+
+import numpy as np
+
+from .utils import academic_style, fig_to_base64, safe_matrix, safe_vector
+
+
+def solve_lu(A_list: list, b_list: list) -> dict[str, Any]:
+    A = safe_matrix(A_list)
+    b = safe_vector(b_list, "b")
+    n, m = A.shape
+    if n != m:
+        raise ValueError("Matrix A must be square")
+    if len(b) != n:
+        raise ValueError("Dimension mismatch between A and b")
+
+    P, L, U = np.linalg.lu(A)
+    # P @ A = L @ U  =>  solve A x = b  =>  L y = P @ b,  U x = y
+    Pb = P @ b
+
+    y = np.zeros(n)
+    steps_forward = []
+    for i in range(n):
+        y[i] = Pb[i] - np.dot(L[i, :i], y[:i])
+        steps_forward.append({"step": i + 1, "y": y.copy().tolist()})
+
+    x = np.zeros(n)
+    steps_backward = []
+    for i in range(n - 1, -1, -1):
+        x[i] = (y[i] - np.dot(U[i, i + 1 :], x[i + 1 :])) / U[i, i]
+        steps_backward.append({"step": n - i, "x": x.copy().tolist()})
+
+    residual = float(np.linalg.norm(A @ x - b))
+
+    plot_data = {
+        "A": A.tolist(),
+        "L": L.tolist(),
+        "U": U.tolist(),
+        "P": P.tolist(),
+        "b": b.tolist(),
+        "Pb": Pb.tolist(),
+        "y": y.tolist(),
+        "x": x.tolist(),
+        "steps": {"forward": steps_forward, "backward": steps_backward},
+    }
+
+    academic_style()
+    import matplotlib.pyplot as plt
+
+    fig, axes = plt.subplots(1, 3, figsize=(12, 4))
+
+    def heatmap(ax, M, title):
+        im = ax.imshow(M, cmap="viridis", aspect="auto")
+        ax.set_title(title)
+        for i in range(M.shape[0]):
+            for j in range(M.shape[1]):
+                ax.text(j, i, f"{M[i, j]:.2g}", ha="center", va="center", color="white", fontsize=8)
+        fig.colorbar(im, ax=ax, fraction=0.046)
+
+    heatmap(axes[0], L, "L")
+    heatmap(axes[1], U, "U")
+    heatmap(axes[2], A, "A")
+    fig.suptitle("LU Decomposition (PA = LU)")
+    fig.tight_layout()
+    img = fig_to_base64(fig)
+
+    return {
+        "method": "lu",
+        "input": {"A": A_list, "b": b_list},
+        "iterations": steps_forward + [{"phase": "backward", **s} for s in steps_backward],
+        "result": {"x": x.tolist(), "L": L.tolist(), "U": U.tolist(), "P": P.tolist(), "y": y.tolist()},
+        "error": residual,
+        "converged": residual < 1e-8,
+        "formulas": {
+            "decomposition": "PA = LU",
+            "forward": "Ly = Pb",
+            "backward": "Ux = y",
+        },
+        "plotData": plot_data,
+        "matplotlibImageBase64": img,
+    }

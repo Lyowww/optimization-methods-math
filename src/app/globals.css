@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --lab-bg: #f8fafc;
+  --lab-card: rgba(255, 255, 255, 0.72);
+  --lab-border: rgba(148, 163, 184, 0.35);
+  --lab-accent: #0891b2;
+  --lab-muted: #64748b;
+  --lab-text: #0f172a;
+  --mesh-gradient: radial-gradient(at 20% 20%, rgba(6, 182, 212, 0.15), transparent 50%),
+    radial-gradient(at 80% 0%, rgba(139, 92, 246, 0.12), transparent 45%),
+    radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.1), transparent 50%);
+  --font-display: "Georgia", "Times New Roman", serif;
+  --font-body: system-ui, -apple-system, sans-serif;
+}
+
+.dark {
+  --lab-bg: #030712;
+  --lab-card: rgba(15, 23, 42, 0.65);
+  --lab-border: rgba(71, 85, 105, 0.45);
+  --lab-accent: #22d3ee;
+  --lab-muted: #94a3b8;
+  --lab-text: #f1f5f9;
+  --mesh-gradient: radial-gradient(at 15% 25%, rgba(34, 211, 238, 0.18), transparent 55%),
+    radial-gradient(at 85% 10%, rgba(167, 139, 250, 0.14), transparent 50%),
+    radial-gradient(at 50% 90%, rgba(52, 211, 153, 0.1), transparent 55%);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply min-h-screen font-body text-lab-text antialiased;
+  background-color: var(--lab-bg);
+  background-image: var(--mesh-gradient);
+}
+
+.glass-card {
+  @apply rounded-2xl border border-lab-border shadow-glass backdrop-blur-xl;
+  background: var(--lab-card);
+}
+
+.btn-primary {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:brightness-110 active:scale-[0.98];
+}
+
+.btn-secondary {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl border border-lab-border bg-lab-card px-4 py-2 text-sm font-medium transition hover:border-cyan-500/50;
+}
+
+.input-field {
+  @apply w-full rounded-lg border border-lab-border bg-slate-900/20 px-3 py-2 text-sm outline-none transition focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500/30 dark:bg-slate-950/40;
+}
+
+.katex-block {
+  @apply overflow-x-auto rounded-lg bg-slate-900/30 p-3 text-sm;
+}
+
+.plot-container {
+  @apply min-h-[380px] w-full rounded-xl;
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}

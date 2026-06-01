@@ -1,0 +1,6 @@
+# Vercel Python serverless (api/index.py) — keep in sync with python-api/requirements.txt
+fastapi==0.115.6
+numpy==2.2.1
+matplotlib==3.10.0
+sympy==1.13.3
+pydantic==2.10.4

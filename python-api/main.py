@@ -1,22 +1,19 @@
-"""FastAPI backend for Numerical Methods Visual Lab."""
+"""FastAPI backend for Optimization Methods Visual Lab."""
 import os
-from typing import Any, Optional
+from typing import Any, Literal
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from solvers import (
-    analyze_problem,
-    compare_jacobi_gauss,
-    solve_iterative,
-    solve_lagrange,
-    solve_least_squares,
-    solve_lu,
-    solve_newton,
+    solve_calculus_of_variations,
+    solve_constrained_extremum,
+    solve_graphical_lp,
+    solve_linear_programming,
 )
 
-app = FastAPI(title="Numerical Methods Visual Lab API", version="1.0.0")
+app = FastAPI(title="Optimization Methods Visual Lab API", version="2.0.0")
 
 
 def _cors_origins() -> list[str]:
@@ -44,112 +41,65 @@ app.add_middleware(
 )
 
 
-class NewtonRequest(BaseModel):
-    function: str
-    derivative: Optional[str] = None
-    x0: float
-    tolerance: float = 1e-6
-    max_iterations: int = 50
-    numerical_derivative: bool = False
+class ConstraintRow(BaseModel):
+    coeffs: list[float]
+    rhs: float
+    op: Literal["<=", ">=", "="] = "<="
 
 
-class IterativeRequest(BaseModel):
-    A: list[list[float]]
-    b: list[float]
-    x0: list[float]
-    tolerance: float = 1e-6
-    max_iterations: int = 100
+class LPRequest(BaseModel):
+    sense: Literal["max", "min"] = "max"
+    objective: list[float]
+    constraints: list[ConstraintRow]
+    bounds: list[list[float | None]] | None = None
 
 
-class PointsRequest(BaseModel):
-    points: list[dict[str, float]]
-    show_basis: bool = False
+class ConstrainedExtremumRequest(BaseModel):
+    objective: str
+    equalities: list[str] = Field(default_factory=list)
+    inequalities: list[str] = Field(default_factory=list)
 
 
-class LURequest(BaseModel):
-    A: list[list[float]]
-    b: list[float]
-
-
-class AnalyzeRequest(BaseModel):
-    text: str
-
-
-class CompareRequest(IterativeRequest):
-    pass
+class CalculusRequest(BaseModel):
+    integrand: str
+    a: float
+    b: float
+    y_a: float
+    y_b: float
 
 
 @app.get("/")
 def root():
-    return {"status": "ok", "service": "numerical-methods-api"}
+    return {"status": "ok", "service": "optimization-methods-api"}
 
 
-@app.post("/api/newton")
-def api_newton(req: NewtonRequest) -> dict[str, Any]:
+@app.post("/api/constrained-extremum")
+def api_constrained_extremum(req: ConstrainedExtremumRequest) -> dict[str, Any]:
     try:
-        return solve_newton(
-            req.function,
-            req.derivative,
-            req.x0,
-            req.tolerance,
-            req.max_iterations,
-            req.numerical_derivative,
-        )
+        return solve_constrained_extremum(req.objective, req.equalities, req.inequalities)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
 
 
-@app.post("/api/jacobi")
-def api_jacobi(req: IterativeRequest) -> dict[str, Any]:
+@app.post("/api/linear-programming")
+def api_linear_programming(req: LPRequest) -> dict[str, Any]:
     try:
-        return solve_iterative(req.A, req.b, req.x0, req.tolerance, req.max_iterations, "jacobi")
+        return solve_linear_programming(req.model_dump())
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
 
 
-@app.post("/api/gauss-seidel")
-def api_gauss_seidel(req: IterativeRequest) -> dict[str, Any]:
+@app.post("/api/graphical-lp")
+def api_graphical_lp(req: LPRequest) -> dict[str, Any]:
     try:
-        return solve_iterative(req.A, req.b, req.x0, req.tolerance, req.max_iterations, "gauss-seidel")
+        return solve_graphical_lp(req.model_dump())
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e)) from e
 
 
-@app.post("/api/gauss-seidel/compare")
-def api_compare(req: CompareRequest) -> dict[str, Any]:
+@app.post("/api/calculus-of-variations")
+def api_calculus(req: CalculusRequest) -> dict[str, Any]:
     try:
-        return compare_jacobi_gauss(req.A, req.b, req.x0, req.tolerance, req.max_iterations)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e)) from e
-
-
-@app.post("/api/interpolation/lagrange")
-def api_lagrange(req: PointsRequest) -> dict[str, Any]:
-    try:
-        return solve_lagrange(req.points, req.show_basis)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e)) from e
-
-
-@app.post("/api/least-squares")
-def api_least_squares(req: PointsRequest) -> dict[str, Any]:
-    try:
-        return solve_least_squares(req.points)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e)) from e
-
-
-@app.post("/api/lu")
-def api_lu(req: LURequest) -> dict[str, Any]:
-    try:
-        return solve_lu(req.A, req.b)
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e)) from e
-
-
-@app.post("/api/analyze-problem")
-def api_analyze(req: AnalyzeRequest) -> dict[str, Any]:
-    try:
-        return analyze_problem(req.text)
+        return solve_calculus_of_variations(req.integrand, req.a, req.b, req.y_a, req.y_b)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e)) from e

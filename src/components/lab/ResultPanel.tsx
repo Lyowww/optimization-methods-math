@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { CheckCircle, XCircle } from "lucide-react";
 import type { ApiResponse } from "@/lib/api";
 import { FormulaBlock } from "@/components/ui/FormulaBlock";
+import { StepsPanel } from "@/components/lab/StepsPanel";
 import { useApp } from "@/context/AppProviders";
 
 interface ResultPanelProps {
@@ -61,6 +62,8 @@ export function ResultPanel({ data, error, children }: ResultPanelProps) {
       )}
 
       {children}
+
+      <StepsPanel steps={data.iterations} />
 
       {data.matplotlibImageBase64 && (
         <div className="mt-4">

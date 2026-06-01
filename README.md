@@ -1,26 +1,26 @@
-# Numerical Methods Visual Lab
+# Optimization Methods Visual Lab
 
-Interactive **Numerical Methods Visual Lab** for university teaching — step-by-step solutions, KaTeX formulas, Plotly interactive charts, and matplotlib static exports.
+Interactive **Optimization Methods Visual Lab** for university teaching — constrained extrema (Lagrange / KKT), linear programming, graphical LP with animated objective lines, and calculus of variations (Euler–Lagrange).
 
 **Languages:** English (en) · Armenian (hy)
+
+**Author:** Lyova Hovhannisyan — Yerevan State University, Faculty of Informatics and Applied Mathematics, Optimization Methods course (Instructor: Rafik Khachatryan).
 
 ## Stack
 
 | Layer | Technology |
 |--------|------------|
-| Frontend | Next.js 15 (App Router), TypeScript, Tailwind CSS, Framer Motion, Plotly.js, KaTeX |
-| Backend | FastAPI, NumPy, SymPy, Matplotlib |
+| Frontend | Next.js 15, TypeScript, Tailwind CSS, Framer Motion, Plotly.js, KaTeX |
+| Backend | FastAPI, SymPy, NumPy, SciPy, Matplotlib |
 
-## Methods
+## Modules
 
-1. **Newton-Raphson** — tangents, iteration table, animation slider  
-2. **Jacobi** — convergence & residual plots  
-3. **Gauss-Seidel** — same + **Jacobi vs GS comparison**  
-4. **Lagrange interpolation** — editable points, optional basis polynomials  
-5. **Least squares** — fit line, residuals, SSE  
-6. **LU decomposition** — L/U display, substitution steps  
+1. **Constrained Extremum Solver** — Lagrange multipliers, Kuhn–Tucker conditions, Hessian classification, contours & feasible region  
+2. **Linear Programming Solver** — SciPy simplex (HiGHS), active constraints, feasible region  
+3. **Graphical LP Visualizer** — constraint lines, shaded feasible region, animated objective line, optimal vertex  
+4. **Calculus of Variations** — Euler–Lagrange derivation, extremal curve, functional value  
 
-**Problem Analyzer** (`/analyze`) parses natural-language input and opens the matching method with prefilled parameters.
+All interactive charts support **hover**, **zoom**, **pan** (Plotly toolbar), plus **PNG** (matplotlib / download) and **PDF** (lab export).
 
 ## Quick start
 
@@ -29,12 +29,10 @@ Interactive **Numerical Methods Visual Lab** for university teaching — step-by
 ```bash
 cd python-api
 python3 -m venv .venv
-source .venv/bin/activate   # Windows: .venv\Scripts\activate
+source .venv/bin/activate
 pip install -r requirements.txt
-uvicorn main:app --reload
+uvicorn main:app --reload --port 8000
 ```
-
-API: [http://127.0.0.1:8000](http://127.0.0.1:8000)
 
 ### 2. Next.js frontend
 
@@ -43,125 +41,27 @@ npm install
 npm run dev
 ```
 
-App: [http://localhost:3000](http://localhost:3000)
-
-Local dev proxies `/api/*` → `http://127.0.0.1:8000` via `next.config.ts` (run uvicorn in another terminal). No `.env` required.
-
-## Deploy to Vercel
-
-The repo is configured for **one Vercel project**: Next.js frontend + Python FastAPI in serverless (`api/index.py`).
-
-### 1. Push to GitHub
-
-```bash
-git init
-git add .
-git commit -m "Initial commit"
-git remote add origin <your-repo-url>
-git push -u origin main
-```
-
-### 2. Import on Vercel
-
-1. Go to [vercel.com/new](https://vercel.com/new) → import your repository  
-2. **Framework preset:** Next.js (auto-detected)  
-3. **Build command:** `npm run build` (default)  
-4. **Install command:** `npm install` (default)  
-5. Deploy
-
-No `NEXT_PUBLIC_API_URL` needed in production — the browser calls `/api/...` on the same domain; `vercel.json` rewrites those requests to the Python function.
-
-### 3. Optional environment variables (Vercel dashboard)
-
-| Variable | When to use |
-|----------|-------------|
-| `ALLOWED_ORIGINS` | Custom domain, e.g. `https://numerical-lab.youruni.edu` |
-| `NEXT_PUBLIC_API_URL` | Only if API is hosted elsewhere (not recommended) |
-
-### 4. Plan notes
-
-The Python function uses **NumPy, SymPy, and Matplotlib** (~large cold start).
-
-- **Hobby (default):** `maxDuration: 10`, `memory: 2048` (personal account max)  
-- First request after idle may be slow (cold start with SymPy/Matplotlib); retry if it times out  
-- **Pro:** you can raise `maxDuration` to 60 in `vercel.json`
-
-### 5. Verify after deploy
-
-- Open `https://<your-project>.vercel.app`  
-- Run any method (e.g. Newton → **Run Analysis**)  
-- If errors appear, check **Vercel → Project → Logs** for the `api/index` function  
-
-### Project layout (Vercel)
-
-```
-api/index.py          # Serverless entry → imports python-api/main.py
-requirements.txt      # Python deps for Vercel
-vercel.json           # Rewrites /api/* → Python, function limits
-python-api/           # FastAPI + solvers (shared with local uvicorn)
-```
+Open [http://localhost:3000](http://localhost:3000). API calls use `/api/*` rewrites to the Python backend (see `next.config.ts`).
 
 ## API endpoints
 
-| Method | POST path |
-|--------|-----------|
-| Newton | `/api/newton` |
-| Jacobi | `/api/jacobi` |
-| Gauss-Seidel | `/api/gauss-seidel` |
-| Compare Jacobi/GS | `/api/gauss-seidel/compare` |
-| Lagrange | `/api/interpolation/lagrange` |
-| Least squares | `/api/least-squares` |
-| LU | `/api/lu` |
-| Problem analyzer | `/api/analyze-problem` |
-
-Response shape:
-
-```json
-{
-  "method": "...",
-  "input": {},
-  "iterations": [],
-  "result": {},
-  "error": null,
-  "converged": true,
-  "formulas": {},
-  "plotData": {},
-  "matplotlibImageBase64": "..."
-}
-```
-
-## Pages
-
-- `/` — Dashboard  
-- `/methods` — Method selector  
-- `/methods/[method]` — Input + charts + results  
-- `/analyze` — Problem Analyzer  
-
-## Example problems
-
-Built-in **Load Example** on each method page matches the assignment spec (Newton `x³-2x-5`, Jacobi/GS 3×3 system, Lagrange/LS points, LU system).
-
-## Features
-
-- Dark / light theme  
-- EN / HY UI strings  
-- Glassmorphism layout (input | chart | results)  
-- Export PDF, copy JSON solution, download matplotlib PNG  
-- Hover tooltips on Plotly charts (exact x, y)  
+| Endpoint | Description |
+|----------|-------------|
+| `POST /api/constrained-extremum` | Objective + equality/inequality constraints |
+| `POST /api/linear-programming` | LP (2 variables for plots) |
+| `POST /api/graphical-lp` | 2D graphical LP visualization data |
+| `POST /api/calculus-of-variations` | Integrand F(x,y,y′), interval, boundary values |
 
 ## Project structure
 
 ```
-├── api/index.py          # Vercel Python serverless entry
-├── vercel.json           # Vercel config (rewrites + function settings)
-├── requirements.txt      # Python deps (Vercel)
-├── src/app/              # Next.js pages
-├── src/components/       # UI, charts, lab layout
-├── src/lib/              # API client, i18n, plots
+├── api/index.py              # Vercel Python serverless entry
 ├── python-api/
-│   ├── main.py           # FastAPI app
-│   └── solvers/          # Numerical implementations
-└── README.md
+│   ├── main.py
+│   └── solvers/              # Optimization implementations
+├── src/app/methods/          # Four module pages
+├── src/components/           # Lab UI, Plotly charts
+└── src/lib/                  # API client, i18n, plots
 ```
 
 ## Author

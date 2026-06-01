@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { METHODS } from "@/lib/methods";
 import { useApp } from "@/context/AppProviders";
 import { motion } from "framer-motion";
-import { FlaskConical, Home, Sparkles, X } from "lucide-react";
+import { FlaskConical, Home, X } from "lucide-react";
 
 interface SidebarProps {
   mobileOpen: boolean;
@@ -24,7 +24,7 @@ export function Sidebar({ mobileOpen, onClose }: SidebarProps) {
         </div>
         <div>
           <p className="font-display text-sm font-bold leading-tight">{tr.appName}</p>
-          <p className="text-[10px] text-lab-muted">Visual Lab</p>
+          <p className="text-[10px] text-lab-muted">Optimization Lab</p>
         </div>
       </Link>
 
@@ -45,16 +45,7 @@ export function Sidebar({ mobileOpen, onClose }: SidebarProps) {
             pathname === "/methods" ? "bg-cyan-500/15 text-cyan-600 dark:text-cyan-300" : "hover:bg-slate-500/10"
           }`}
         >
-          <Sparkles size={16} /> {tr.methods}
-        </Link>
-        <Link
-          href="/analyze"
-          onClick={onClose}
-          className={`flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition ${
-            pathname === "/analyze" ? "bg-cyan-500/15 text-cyan-600 dark:text-cyan-300" : "hover:bg-slate-500/10"
-          }`}
-        >
-          <Sparkles size={16} /> {tr.analyze}
+          {tr.methods}
         </Link>
 
         <p className="mb-2 mt-6 px-3 text-xs font-semibold uppercase tracking-wider text-lab-muted">

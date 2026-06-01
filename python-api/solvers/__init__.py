@@ -1,16 +1,11 @@
-from .newton import solve_newton
-from .iterative import solve_iterative, compare_jacobi_gauss
-from .lagrange import solve_lagrange
-from .least_squares import solve_least_squares
-from .lu import solve_lu
-from .analyzer import analyze_problem
+from .calculus_of_variations import solve_calculus_of_variations
+from .constrained_extremum import solve_constrained_extremum
+from .graphical_lp import solve_graphical_lp
+from .linear_programming import solve_linear_programming
 
 __all__ = [
-    "solve_newton",
-    "solve_iterative",
-    "compare_jacobi_gauss",
-    "solve_lagrange",
-    "solve_least_squares",
-    "solve_lu",
-    "analyze_problem",
+    "solve_constrained_extremum",
+    "solve_linear_programming",
+    "solve_graphical_lp",
+    "solve_calculus_of_variations",
 ]

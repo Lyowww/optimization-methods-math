@@ -3,5 +3,6 @@ uvicorn[standard]==0.32.1
 numpy==2.2.1
 matplotlib==3.10.0
 sympy==1.13.3
+scipy==1.14.1
 pydantic==2.10.4
 python-multipart==0.0.20

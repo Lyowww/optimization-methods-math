@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, FlaskConical, Sparkles } from "lucide-react";
+import { ArrowRight, FlaskConical } from "lucide-react";
 import { useApp } from "@/context/AppProviders";
 import { METHODS } from "@/lib/methods";
 
@@ -21,16 +21,13 @@ export default function HomePage() {
         <div className="relative">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-xs font-medium text-cyan-600 dark:text-cyan-300">
             <FlaskConical size={14} />
-            University Visual Lab
+            Optimization Visual Lab
           </div>
           <h1 className="font-display text-3xl font-bold leading-tight md:text-5xl">{tr.appName}</h1>
           <p className="mt-4 max-w-2xl text-base text-lab-muted md:text-lg">{tr.homeHero}</p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="/methods" className="btn-primary">
               {tr.explore} <ArrowRight size={16} />
-            </Link>
-            <Link href="/analyze" className="btn-secondary">
-              <Sparkles size={16} /> {tr.analyze}
             </Link>
           </div>
         </div>

@@ -1,61 +1,34 @@
-import type { MethodId } from "./methods";
+import type { LPPayload } from "./api";
 
-export const EXAMPLES: Record<MethodId, unknown> = {
-  newton: {
-    function: "x**3 - 2*x - 5",
-    derivative: "3*x**2 - 2",
-    x0: 2,
-    tolerance: 1e-6,
-    max_iterations: 50,
-    numerical_derivative: false,
+export const EXAMPLES = {
+  "constrained-extremum": {
+    objective: "x1**2 + x2**2",
+    equalities: ["x1 + x2 - 1"],
+    inequalities: ["-x1", "-x2"],
   },
-  jacobi: {
-    A: [
-      [10, 1, 1],
-      [2, 10, 1],
-      [2, 2, 10],
+  "linear-programming": {
+    sense: "max",
+    objective: [3, 2],
+    constraints: [
+      { coeffs: [1, 0], rhs: 4, op: "<=" as const },
+      { coeffs: [0, 1], rhs: 6, op: "<=" as const },
+      { coeffs: [1, 1], rhs: 8, op: "<=" as const },
     ],
-    b: [12, 13, 14],
-    x0: [0, 0, 0],
-    tolerance: 1e-6,
-    max_iterations: 100,
-  },
-  "gauss-seidel": {
-    A: [
-      [10, 1, 1],
-      [2, 10, 1],
-      [2, 2, 10],
+  } satisfies LPPayload,
+  "graphical-lp": {
+    sense: "max",
+    objective: [3, 2],
+    constraints: [
+      { coeffs: [1, 0], rhs: 4, op: "<=" as const },
+      { coeffs: [0, 1], rhs: 6, op: "<=" as const },
+      { coeffs: [1, 1], rhs: 8, op: "<=" as const },
     ],
-    b: [12, 13, 14],
-    x0: [0, 0, 0],
-    tolerance: 1e-6,
-    max_iterations: 100,
-    compare: true,
-  },
-  lagrange: {
-    points: [
-      { x: 1, y: 2 },
-      { x: 2, y: 5 },
-      { x: 4, y: 7 },
-      { x: 5, y: 11 },
-    ],
-    show_basis: false,
-  },
-  "least-squares": {
-    points: [
-      { x: 1, y: 2 },
-      { x: 2, y: 3 },
-      { x: 3, y: 5 },
-      { x: 4, y: 4 },
-      { x: 5, y: 6 },
-    ],
-  },
-  lu: {
-    A: [
-      [2, 1, 1],
-      [4, -6, 0],
-      [-2, 7, 2],
-    ],
-    b: [5, -2, 9],
+  } satisfies LPPayload,
+  "calculus-of-variations": {
+    integrand: "yp**2",
+    a: 0,
+    b: 1,
+    y_a: 0,
+    y_b: 1,
   },
 };

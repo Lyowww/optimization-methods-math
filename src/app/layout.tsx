@@ -6,8 +6,8 @@ import { AppProviders } from "@/context/AppProviders";
 import { AppShell } from "@/components/layout/AppShell";
 
 export const metadata: Metadata = {
-  title: "Numerical Methods Visual Lab",
-  description: "Interactive numerical methods visual laboratory for university education",
+  title: "Optimization Methods Visual Lab",
+  description: "Interactive optimization laboratory: constrained extrema, linear programming, graphical LP, calculus of variations",
   authors: [{ name: "Lyova Hovhannisyan" }],
   other: {
     course: "Optimization Methods (Օպտիմիզացիայի մեթոդներ)",

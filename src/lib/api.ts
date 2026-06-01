@@ -1,9 +1,3 @@
-/**
- * API base URL:
- * - Production (Vercel): same origin — /api/* rewrites to Python serverless
- * - Local dev: Next.js rewrites /api/* → uvicorn (see next.config.ts)
- * - Override: set NEXT_PUBLIC_API_URL (e.g. external API)
- */
 function getApiBase(): string {
   if (process.env.NEXT_PUBLIC_API_URL) {
     return process.env.NEXT_PUBLIC_API_URL.replace(/\/$/, "");
@@ -19,16 +13,35 @@ function getApiBase(): string {
 
 const API_BASE = getApiBase();
 
+export interface ApiStep {
+  step: number;
+  title: string;
+  detail: string;
+}
+
 export interface ApiResponse {
   method: string;
   input: Record<string, unknown>;
-  iterations: Record<string, unknown>[];
+  iterations: ApiStep[];
   result: Record<string, unknown>;
   error: number | null;
   converged: boolean;
   formulas: Record<string, string>;
   plotData: Record<string, unknown>;
   matplotlibImageBase64?: string;
+}
+
+export interface LPConstraint {
+  coeffs: number[];
+  rhs: number;
+  op: "<=" | ">=" | "=";
+}
+
+export interface LPPayload {
+  sense: "max" | "min";
+  objective: number[];
+  constraints: LPConstraint[];
+  bounds?: ([number | null, number | null] | null[])[];
 }
 
 async function post<T>(path: string, body: unknown): Promise<T> {
@@ -45,19 +58,22 @@ async function post<T>(path: string, body: unknown): Promise<T> {
 }
 
 export const api = {
-  newton: (body: unknown) => post<ApiResponse>("/api/newton", body),
-  jacobi: (body: unknown) => post<ApiResponse>("/api/jacobi", body),
-  gaussSeidel: (body: unknown) => post<ApiResponse>("/api/gauss-seidel", body),
-  compare: (body: unknown) => post<Record<string, unknown>>("/api/gauss-seidel/compare", body),
-  lagrange: (body: unknown) => post<ApiResponse>("/api/interpolation/lagrange", body),
-  leastSquares: (body: unknown) => post<ApiResponse>("/api/least-squares", body),
-  lu: (body: unknown) => post<ApiResponse>("/api/lu", body),
-  analyze: (text: string) => post<AnalyzeResult>("/api/analyze-problem", { text }),
-};
+  constrainedExtremum: (body: {
+    objective: string;
+    equalities?: string[];
+    inequalities?: string[];
+  }) => post<ApiResponse>("/api/constrained-extremum", body),
 
-export interface AnalyzeResult {
-  method: string | null;
-  confidence: number;
-  parsed: Record<string, unknown>;
-  ready: boolean;
-}
+  linearProgramming: (body: LPPayload) =>
+    post<ApiResponse>("/api/linear-programming", body),
+
+  graphicalLp: (body: LPPayload) => post<ApiResponse>("/api/graphical-lp", body),
+
+  calculusOfVariations: (body: {
+    integrand: string;
+    a: number;
+    b: number;
+    y_a: number;
+    y_b: number;
+  }) => post<ApiResponse>("/api/calculus-of-variations", body),
+};

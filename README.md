@@ -166,4 +166,6 @@ Built-in **Load Example** on each method page matches the assignment spec (Newto
 
 ## Author
 
-Educational project — **Hovhannisyan Lyova**, Optimization / Numerical Methods course.
+**Lyova Hovhannisyan**
+
+Այս նախագիծը պատրաստվել է Երևանի պետական համալսարանի ինֆորմատիկա և կիրառական մաթեմատիկա ֆակուլտետի Տեղեկատվական անվտանգության 3-րդ կուրսի ուսանող Լյովա Հովհաննիսյանի կողմից «Օպտիմիզացիայի մեթոդներ» առարկայի համար։ Դասախոս՝ Խաչատրյան Ռաֆիկ

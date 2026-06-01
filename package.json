@@ -2,6 +2,7 @@
   "name": "numerical-methods-visual-lab",
   "version": "1.0.0",
   "private": true,
+  "author": "Lyova Hovhannisyan",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

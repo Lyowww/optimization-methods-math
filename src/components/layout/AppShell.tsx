@@ -3,6 +3,7 @@
 import { ReactNode, useState } from "react";
 import { Sidebar } from "./Sidebar";
 import { TopBar } from "./TopBar";
+import { Footer } from "./Footer";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function AppShell({ children }: { children: ReactNode }) {
@@ -25,6 +26,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             {children}
           </motion.main>
         </AnimatePresence>
+        <Footer />
       </div>
     </div>
   );

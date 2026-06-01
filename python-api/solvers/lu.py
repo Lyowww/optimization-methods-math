@@ -6,6 +6,33 @@ import numpy as np
 from .utils import academic_style, fig_to_base64, safe_matrix, safe_vector
 
 
+def _lu_factorize(A: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """
+    PA = LU via Doolittle elimination with partial pivoting.
+    Avoids np.linalg.lu (naming conflicts with this module on some deployments).
+    """
+    n = A.shape[0]
+    U = A.astype(float).copy()
+    L = np.eye(n, dtype=float)
+    P = np.eye(n, dtype=float)
+
+    for k in range(n - 1):
+        pivot_row = k + int(np.argmax(np.abs(U[k:, k])))
+        if abs(U[pivot_row, k]) < 1e-14:
+            raise ValueError("Matrix is singular or near-singular — LU failed.")
+
+        if pivot_row != k:
+            U[[k, pivot_row]] = U[[pivot_row, k]]
+            L[[k, pivot_row], :k] = L[[pivot_row, k], :k]
+            P[[k, pivot_row]] = P[[pivot_row, k]]
+
+        for i in range(k + 1, n):
+            L[i, k] = U[i, k] / U[k, k]
+            U[i, k:] -= L[i, k] * U[k, k:]
+
+    return P, L, U
+
+
 def solve_lu(A_list: list, b_list: list) -> dict[str, Any]:
     A = safe_matrix(A_list)
     b = safe_vector(b_list, "b")
@@ -15,8 +42,7 @@ def solve_lu(A_list: list, b_list: list) -> dict[str, Any]:
     if len(b) != n:
         raise ValueError("Dimension mismatch between A and b")
 
-    P, L, U = np.linalg.lu(A)
-    # P @ A = L @ U  =>  solve A x = b  =>  L y = P @ b,  U x = y
+    P, L, U = _lu_factorize(A)
     Pb = P @ b
 
     y = np.zeros(n)
@@ -28,6 +54,8 @@ def solve_lu(A_list: list, b_list: list) -> dict[str, Any]:
     x = np.zeros(n)
     steps_backward = []
     for i in range(n - 1, -1, -1):
+        if abs(U[i, i]) < 1e-14:
+            raise ValueError("Zero pivot on diagonal — cannot complete back substitution.")
         x[i] = (y[i] - np.dot(U[i, i + 1 :], x[i + 1 :])) / U[i, i]
         steps_backward.append({"step": n - i, "x": x.copy().tolist()})
 

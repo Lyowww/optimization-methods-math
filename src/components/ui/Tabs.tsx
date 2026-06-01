@@ -16,15 +16,30 @@ interface TabsProps {
   variant?: "pill" | "underline";
   className?: string;
   onChange?: (id: string) => void;
+  /** Keep inactive panels in the DOM (required for Plotly / charts). */
+  keepMounted?: boolean;
 }
 
-export function Tabs({ tabs, defaultTab, variant = "pill", className = "", onChange }: TabsProps) {
+export function Tabs({
+  tabs,
+  defaultTab,
+  variant = "pill",
+  className = "",
+  onChange,
+  keepMounted = false,
+}: TabsProps) {
   const [active, setActive] = useState(defaultTab ?? tabs[0]?.id ?? "");
   const baseId = useId();
 
   const select = (id: string) => {
     setActive(id);
     onChange?.(id);
+    // Plotly charts need a resize after the panel becomes visible
+    if (id === "graph") {
+      requestAnimationFrame(() => {
+        window.dispatchEvent(new Event("resize"));
+      });
+    }
   };
 
   const current = tabs.find((t) => t.id === active) ?? tabs[0];
@@ -81,14 +96,34 @@ export function Tabs({ tabs, defaultTab, variant = "pill", className = "", onCha
         })}
       </div>
 
-      <div
-        role="tabpanel"
-        id={`${baseId}-panel-${current?.id}`}
-        aria-labelledby={`${baseId}-tab-${current?.id}`}
-        className="mt-4 focus:outline-none"
-      >
-        {current?.content}
-      </div>
+      {keepMounted ? (
+        <div className="mt-4">
+          {tabs.map((tab) => {
+            const isActive = tab.id === active;
+            return (
+              <div
+                key={tab.id}
+                role="tabpanel"
+                id={`${baseId}-panel-${tab.id}`}
+                aria-labelledby={`${baseId}-tab-${tab.id}`}
+                hidden={!isActive}
+                className={isActive ? "block focus:outline-none" : "hidden"}
+              >
+                {tab.content}
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div
+          role="tabpanel"
+          id={`${baseId}-panel-${current?.id}`}
+          aria-labelledby={`${baseId}-tab-${current?.id}`}
+          className="mt-4 focus:outline-none"
+        >
+          {current?.content}
+        </div>
+      )}
     </div>
   );
 }

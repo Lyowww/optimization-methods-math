@@ -1,25 +1,48 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import type { PlotParams } from "react-plotly.js";
 import { useApp } from "@/context/AppProviders";
+import { useLabTab } from "@/context/LabTabContext";
 
 const Plot = dynamic(() => import("react-plotly.js"), { ssr: false });
 
-export function PlotlyChart({ data, layout, config }: Partial<PlotParams>) {
+interface PlotlyChartProps extends Partial<PlotParams> {
+  /** Override visibility; defaults to lab graph tab being active. */
+  visible?: boolean;
+}
+
+export function PlotlyChart({ data, layout, config, visible }: PlotlyChartProps) {
   const { theme } = useApp();
+  const labTab = useLabTab();
+  const isVisible = visible ?? labTab === "graph";
+  const wrapRef = useRef<HTMLDivElement>(null);
   const isDark = theme === "dark";
   const text = isDark ? "#e2e8f0" : "#0f172a";
   const grid = isDark ? "#334155" : "#e2e8f0";
   const paper = isDark ? "rgba(2,6,23,0.4)" : "rgba(255,255,255,0.6)";
 
+  useEffect(() => {
+    if (!isVisible) return;
+    const fire = () => window.dispatchEvent(new Event("resize"));
+    const t1 = requestAnimationFrame(fire);
+    const t2 = window.setTimeout(fire, 150);
+    const t3 = window.setTimeout(fire, 400);
+    return () => {
+      cancelAnimationFrame(t1);
+      window.clearTimeout(t2);
+      window.clearTimeout(t3);
+    };
+  }, [isVisible, data, theme, layout]);
+
   return (
-    <div className="h-full min-h-[280px] w-full sm:min-h-[360px]">
+    <div ref={wrapRef} className="h-[min(420px,55vh)] min-h-[280px] w-full sm:min-h-[360px]">
       <Plot
         data={data || []}
         layout={{
           autosize: true,
-          margin: { l: 48, r: 20, t: 40, b: 48 },
+          margin: { l: 52, r: 24, t: 48, b: 52 },
           paper_bgcolor: paper,
           plot_bgcolor: paper,
           font: { color: text, family: "var(--font-body), system-ui, sans-serif", size: 12 },
@@ -36,7 +59,7 @@ export function PlotlyChart({ data, layout, config }: Partial<PlotParams>) {
             bgcolor: "transparent",
             font: { color: text, size: 11 },
             orientation: "h",
-            y: 1.12,
+            y: 1.14,
             x: 0,
           },
           ...layout,
@@ -51,7 +74,7 @@ export function PlotlyChart({ data, layout, config }: Partial<PlotParams>) {
           ...config,
         }}
         useResizeHandler
-        style={{ width: "100%", height: "100%", minHeight: 280 }}
+        style={{ width: "100%", height: "100%" }}
       />
     </div>
   );

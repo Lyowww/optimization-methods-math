@@ -46,6 +46,7 @@ export const translations = {
 
     selectMethod: "Select a Module",
     explore: "Explore Modules",
+    openLab: "Open lab",
 
     homeHero:
       "An interactive mathematical laboratory for constrained optimization, linear programming, graphical solution methods, and the calculus of variations.",
@@ -175,6 +176,7 @@ export const translations = {
 
     selectMethod: "Ընտրեք մոդուլը",
     explore: "Ուսումնասիրել մոդուլները",
+    openLab: "Բացել լաբորատորիան",
 
     homeHero:
       "Ինտերակտիվ մաթեմատիկական լաբորատորիա սահմանափակված օպտիմիզացման, գծային ծրագրավորման, գրաֆիկական լուծման մեթոդների և տարողական հաշվարկի ուսումնասիրման համար։",

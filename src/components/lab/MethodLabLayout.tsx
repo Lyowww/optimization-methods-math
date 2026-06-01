@@ -1,12 +1,13 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { motion } from "framer-motion";
 import { LineChart, PenLine, Sparkles } from "lucide-react";
 import type { ApiResponse } from "@/lib/api";
 import { Tabs } from "@/components/ui/Tabs";
 import { ResultPanel } from "@/components/lab/ResultPanel";
 import { useApp } from "@/context/AppProviders";
+import { LabTabProvider } from "@/context/LabTabContext";
 
 interface MethodLabLayoutProps {
   title: string;
@@ -36,10 +37,23 @@ export function MethodLabLayout({
   actions,
 }: MethodLabLayoutProps) {
   const { tr } = useApp();
+  const [activeTab, setActiveTab] = useState("input");
+
+  const graphPanel = (
+    <div className="px-1 pb-2 sm:px-2">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-lab-border/60 pb-3">
+        <p className="text-xs font-semibold uppercase tracking-wider text-lab-muted">
+          {tr.interactivePlot}
+        </p>
+        <p className="text-[10px] text-lab-muted">{tr.plotHint}</p>
+      </div>
+      {chartToolbar}
+      <div className="plot-container">{chart}</div>
+    </div>
+  );
 
   return (
     <div className="mx-auto max-w-[1680px] space-y-4 sm:space-y-6">
-      {/* Module header */}
       <header className="glass-card overflow-hidden">
         <div className={`h-1 w-full bg-gradient-to-r ${moduleColor}`} />
         <div className="flex flex-col gap-4 p-5 sm:flex-row sm:items-start sm:justify-between sm:p-6">
@@ -64,11 +78,13 @@ export function MethodLabLayout({
         </div>
       </header>
 
-      {/* Tabbed workspace */}
-      <div id="lab-export-root" className="glass-card overflow-hidden">
+      <div id="lab-export-root" className="glass-card p-3 sm:p-4">
+        <LabTabProvider activeTab={activeTab}>
         <Tabs
           variant="pill"
           defaultTab="input"
+          keepMounted
+          onChange={setActiveTab}
           tabs={[
             {
               id: "input",
@@ -85,20 +101,7 @@ export function MethodLabLayout({
               id: "graph",
               label: tr.tabGraph,
               icon: <LineChart size={16} />,
-              content: (
-                <div className="px-1 pb-2 sm:px-2">
-                  <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-                    <p className="text-xs font-medium uppercase tracking-wider text-lab-muted">
-                      {tr.interactivePlot}
-                    </p>
-                    <p className="text-[10px] text-lab-muted/80">{tr.plotHint}</p>
-                  </div>
-                  {chartToolbar}
-                  <div className="plot-container min-h-[280px] sm:min-h-[360px] lg:min-h-[420px]">
-                    {chart}
-                  </div>
-                </div>
-              ),
+              content: graphPanel,
             },
             {
               id: "solution",
@@ -114,6 +117,7 @@ export function MethodLabLayout({
             },
           ]}
         />
+        </LabTabProvider>
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, FlaskConical, Sparkles } from "lucide-react";
 import { useApp } from "@/context/AppProviders";
 import { METHODS } from "@/lib/methods";
+import { ModuleCard } from "@/components/modules/ModuleCard";
 
 export default function HomePage() {
   const { tr } = useApp();
@@ -56,26 +57,15 @@ export default function HomePage() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.06 }}
+                className="h-full"
               >
-                <Link
-                  href={m.href}
-                  className="glass-card group flex h-full flex-col overflow-hidden transition hover:border-cyan-500/35 hover:shadow-glass-lg"
-                >
-                  <div className={`h-1 bg-gradient-to-r ${m.color}`} />
-                  <div className="flex flex-1 gap-4 p-5 sm:p-6">
-                    <div
-                      className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-xl text-white shadow-md ${m.color}`}
-                    >
-                      {m.icon}
-                    </div>
-                    <div className="min-w-0">
-                      <h3 className="font-semibold transition group-hover:text-cyan-600 dark:group-hover:text-cyan-300">
-                        {meta.title}
-                      </h3>
-                      <p className="mt-1.5 text-sm leading-relaxed text-lab-muted">{meta.desc}</p>
-                    </div>
-                  </div>
-                </Link>
+                <ModuleCard
+                  method={m}
+                  title={meta.title}
+                  description={meta.desc}
+                  openLabel={tr.openLab}
+                  variant="grid"
+                />
               </motion.div>
             );
           })}

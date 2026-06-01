@@ -82,8 +82,9 @@ No `NEXT_PUBLIC_API_URL` needed in production — the browser calls `/api/...` o
 
 The Python function uses **NumPy, SymPy, and Matplotlib** (~large cold start).
 
-- **Pro recommended** — `vercel.json` sets `maxDuration: 60` and `memory: 3008`  
-- **Hobby:** edit `vercel.json` → `"maxDuration": 10`, `"memory": 1024` (calculations may time out on first request)
+- **Hobby (default):** `maxDuration: 10`, `memory: 2048` (personal account max)  
+- First request after idle may be slow (cold start with SymPy/Matplotlib); retry if it times out  
+- **Pro:** you can raise `maxDuration` to 60 in `vercel.json`
 
 ### 5. Verify after deploy
 
